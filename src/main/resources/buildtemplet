@@ -1,0 +1,84 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+version = "1.0"
+group= "com.yourname.modid"
+archivesBaseName = "modid"
+
+minecraft {
+    def mcVer = "<PLACEHOLDER3>";
+    if(rootProject != project) //if this is a sub-project, use the version and runDir of root project
+    {
+        version = rootProject.minecraft.apiVersion; //good magic, AbrarSyed.
+        if(!mcVer.contains(rootProject.minecraft.version)) //Just Work™, of course it will be shit when "1.7.10-x".contains("1.7.1"), but it is... too rare.
+            throw new RuntimeException("Error root project version: " + rootProject.minecraft.version)
+        runDir = "../eclipse/"
+    }
+    else
+    {
+        version = mcVer
+        runDir = "eclipse/"
+    }
+}
+
+dependencies 
+{
+    if(rootProject != project) { //if this is a sub-project, add the dependency of root project
+        compile rootProject
+        compile group: '', name: 'forgeSrc', version: minecraft.version
+    }
+}
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+    from(sourceSets.main.resources.srcDirs) 
+    {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+    from(sourceSets.main.resources.srcDirs)
+    {
+        exclude 'mcmod.info'
+    }
+}
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+compileJava{options.encoding = 'UTF-8'}
+
+eclipse {
+    jdt {
+        sourceCompatibility = 1.6
+        targetCompatibility = 1.6
+    }
+    classpath {
+        file {
+            whenMerged { classpath ->
+                if(rootProject != project) { //if this is a sub-project, fix the project name in Eclipse
+                    classpath.entries.each { 
+                        entry -> if( entry.path == "/${rootProject.name}" ) entry.path = "/Minecraft" 
+                    }
+                }
+            }
+        }
+    }
+}
