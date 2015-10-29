@@ -23,10 +23,6 @@ import org.gradle.api.tasks.bundling.Zip;
 import com.google.common.collect.Sets;
 
 import joptsimple.internal.Strings;
-import net.minecraftforge.gradle.GradleConfigurationException;
-import net.minecraftforge.gradle.ZipFileTree;
-import net.minecraftforge.gradle.delayed.DelayedFileTree;
-import net.minecraftforge.gradle.tasks.ProcessJarTask;
 import net.minecraftforge.gradle.user.UserConstants;
 
 abstract class TasksClassicWorkspace {

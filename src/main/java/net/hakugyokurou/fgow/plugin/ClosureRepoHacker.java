@@ -8,13 +8,17 @@ import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.FlatDirectoryArtifactRepository;
+import org.gradle.api.internal.artifacts.repositories.AbstractArtifactRepository;
+import org.gradle.api.internal.artifacts.repositories.DefaultFlatDirArtifactRepository;
+import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
 
 import com.google.common.collect.Lists;
 
 import groovy.lang.Closure;
+import net.minecraftforge.gradle.common.Constants;
+import net.minecraftforge.gradle.tasks.Download;
+import net.minecraftforge.gradle.tasks.EtagDownloadTask;
 import net.minecraftforge.gradle.tasks.ObtainFernFlowerTask;
-import net.minecraftforge.gradle.tasks.abstractutil.DownloadTask;
-import net.minecraftforge.gradle.tasks.abstractutil.EtagDownloadTask;
 
 @SuppressWarnings("serial")
 public class ClosureRepoHacker extends Closure<Object> {
@@ -51,12 +55,12 @@ public class ClosureRepoHacker extends Closure<Object> {
 		    	if(size > 4)
 		    	{
 		    		boolean hasFlat = false;
-		    		final List<File> flat = Lists.newArrayList(plugin.delayedDirtyFilePublic("what", "a", "shame").call().getParentFile());
+		    		//final List<File> flat = Lists.newArrayList(plugin.delayedDirtyFile("what", "a", "shame").call().getParentFile());
 		    		for(Iterator<ArtifactRepository> iterator = proj.getRepositories().iterator(); iterator.hasNext(); )
 		    		{
 		    			ArtifactRepository artifactRepository = iterator.next();
 		    			String name = artifactRepository.getName();
-		    			if(name.equals("forge") || name.equals("MavenRepo") || name.equals("minecraft") || name.equals("forgeFlatRepo"))
+		    			if(name.equals("forge") || name.equals("MavenRepo") || name.equals("minecraft"))
 		    				iterator.remove();
 		    			if(name.equals("local"))
 		    			{
@@ -70,14 +74,14 @@ public class ClosureRepoHacker extends Closure<Object> {
 		    	            @Override
 		    	            public void execute(FlatDirectoryArtifactRepository repo)
 		    	            {
-		    	                repo.setName(plugin.getApiName()+"FlatRepo");
+		    	                repo.setName(plugin.getApiName(plugin.getExtension())+"FlatRepo");
 		    	                repo.dirs(flat);
 		    	            }
 		    	        });
 		    		}
 		    	}
 		    	//For debug
-		    	/*for(Object o : proj.getRepositories())
+		    	for(Object o : proj.getRepositories())
 		    	{
 		    		AbstractArtifactRepository repository = (AbstractArtifactRepository)o;
 		    		System.out.println("======================");
@@ -90,7 +94,7 @@ public class ClosureRepoHacker extends Closure<Object> {
 		    		{
 		    			System.out.println(((DefaultFlatDirArtifactRepository)repository).getDirs().iterator().next());
 		    		}        			
-		    	}*/
+		    	}
 		    	
 		    	/*proj.getRepositories().clear();
 		    	final String repoDir = plugin.delayedDirtyFilePublic("this", "doesnt", "matter").call().getParentFile().getAbsolutePath();
@@ -108,28 +112,28 @@ public class ClosureRepoHacker extends Closure<Object> {
 		        
 		        ReposExtension reposExtension = ReposExtension.getReposExtension(plugin);
 		        
-		        DownloadTask downloadClient = (DownloadTask)(proj.getTasksByName("downloadClient", false).toArray()[0]);
+		        Download downloadClient = (Download)(proj.getTasksByName(Constants.TASK_DL_CLIENT, false).toArray()[0]);
 		        {
 		        	downloadClient.setUrl(plugin.delayedStringPublic(reposExtension.getMcClientUrl()));
 		        }
 		        
-		        DownloadTask downloadServer = (DownloadTask)(proj.getTasksByName("downloadServer", false).toArray()[0]);
+		        Download downloadServer = (Download)(proj.getTasksByName(Constants.TASK_DL_SERVER, false).toArray()[0]);
 		        {
 		        	downloadServer.setUrl(plugin.delayedStringPublic(reposExtension.getMcServerUrl()));
 		        }
 		        
-		        ObtainFernFlowerTask mcpTask = (ObtainFernFlowerTask)(proj.getTasksByName("downloadMcpTools", false).toArray()[0]);
+		        ObtainFernFlowerTask mcpTask = (ObtainFernFlowerTask)(proj.getTasksByName(Constants.TASK_DL_FERNFLOWER, false).toArray()[0]);
 		        {
 		        	mcpTask.setMcpUrl(plugin.delayedStringPublic(reposExtension.getMcpUrl()));
 		        }
 		        
-		        EtagDownloadTask getAssetsIndex = (EtagDownloadTask)(proj.getTasksByName("getAssetsIndex", false).toArray()[0]);
+		        EtagDownloadTask getAssetsIndex = (EtagDownloadTask)(proj.getTasksByName(Constants.TASK_DL_ASSET_INDEX, false).toArray()[0]);
 		        {
 		        	getAssetsIndex.setUrl(plugin.delayedStringPublic(reposExtension.getAssestIndexUrl()));
 		        	//getAssetsIndex.setFile(plugin.delayedFilePublic(Constants.ASSETS + "/indexes/{ASSET_INDEX}.json"));
 		        }
 		        
-		        EtagDownloadTask getVersionJson = (EtagDownloadTask)(proj.getTasksByName("getVersionJson", false).toArray()[0]);
+		        EtagDownloadTask getVersionJson = (EtagDownloadTask)(proj.getTasksByName(Constants.TASK_DL_VERSION_JSON, false).toArray()[0]);
 		        {
 		        	getVersionJson.setUrl(plugin.delayedStringPublic(reposExtension.getMcJsonUrl()));
 		        }
