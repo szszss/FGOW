@@ -1,8 +1,5 @@
 package net.hakugyokurou.fgow.plugin;
 
-import static net.minecraftforge.gradle.user.UserConstants.CLASSIFIER_SOURCES;
-import static net.minecraftforge.gradle.user.UserConstants.MAPPING_APPENDAGE;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -24,21 +21,25 @@ import com.google.common.collect.Sets;
 
 import joptsimple.internal.Strings;
 import net.minecraftforge.gradle.user.UserConstants;
+import net.minecraftforge.gradle.util.GradleConfigurationException;
+import net.minecraftforge.gradle.util.delayed.DelayedFileTree;
 
 abstract class TasksClassicWorkspace {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked", "serial" })
 	public static void createTasks(final FgowUserPlugin plugin) {
+		/*
 		final Project project = plugin.project;
 		
 		//setupClassicWorkspace
 		Copy unpackMinecraftFiles = plugin.makeTask("unpackMinecraftFiles", Copy.class);
 		{
 			unpackMinecraftFiles.dependsOn("repackMinecraft");
-			unpackMinecraftFiles.from(new DelayedFileTree(project, "", true, plugin)
+			unpackMinecraftFiles.from(new DelayedFileTree(project, "")
 			{
-				@Override
-	            public FileTree resolveDelayed()
+				
+	            @Override
+				public FileTree resolveDelayed(String replaced)
 	            {
 					ProcessJarTask decompDeobf = (ProcessJarTask) project.getTasks().getByName("deobfuscateJar");
 	                pattern = (decompDeobf.isClean() ? "{API_CACHE_DIR}/"+(MAPPING_APPENDAGE) : "{BUILD_DIR}/dirtyArtifacts") + "/";
@@ -49,7 +50,7 @@ abstract class TasksClassicWorkspace {
 	                    pattern += "{API_NAME}";
 	
 	                pattern += "-" + "{API_VERSION}-" + CLASSIFIER_SOURCES + ".jar";
-	                return super.resolveDelayed();
+	                return super.resolveDelayed(replaced);
 	            }
 			});
 			//unpackMinecraftFiles.from(plugin.delayedFilePublic("{CACHE_DIR}/minecraft/net/minecraftforge/forge/{API_VERSION}/forgeSrc-{API_VERSION}-sources.jar"));
@@ -76,7 +77,7 @@ abstract class TasksClassicWorkspace {
         	Action whileCopy = new ActionGenerateMD5Record(new File(plugin.sourceRecord));
         	copyMinecraftSource.dependsOn("unpackMinecraftFiles");
         	copyMinecraftSource.from(plugin.delayedFilePublic("{BUILD_DIR}/tmp/unpackMinecraftFiles"));
-        	copyMinecraftSource.include("**/*.java");
+        	copyMinecraftSource.include("** /*.java"); FIXME:
         	copyMinecraftSource.setIncludeEmptyDirs(false);
         	copyMinecraftSource.into(project.getProjectDir().getAbsolutePath()+"/src/main/java/");
         	copyMinecraftSource.doFirst(whileCopy);
@@ -89,7 +90,7 @@ abstract class TasksClassicWorkspace {
         	Action whileCopy = new ActionGenerateMD5Record(new File(plugin.resourceRecord));
         	copyMinecraftResources.dependsOn("copyMinecraftSource");
         	copyMinecraftResources.from(plugin.delayedFilePublic("{BUILD_DIR}/tmp/unpackMinecraftFiles"));
-        	copyMinecraftResources.exclude("**/*.java");
+        	copyMinecraftResources.exclude("** /*.java"); FIXME:
         	copyMinecraftResources.into(project.getProjectDir().getAbsolutePath()+"/src/main/resources/");
         	copyMinecraftResources.doFirst(whileCopy);
         	copyMinecraftResources.eachFile(whileCopy);
@@ -214,6 +215,6 @@ abstract class TasksClassicWorkspace {
         	pickClassic.dependsOn(pickSource,pickResources);
         }
         
-        project.getGradle().getTaskGraph().whenReady(new ClosureClassicWorkspace(plugin, null));
+        project.getGradle().getTaskGraph().whenReady(new ClosureClassicWorkspace(plugin, null));*/
 	}
 }

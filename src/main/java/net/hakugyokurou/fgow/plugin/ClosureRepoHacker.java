@@ -1,13 +1,17 @@
 package net.hakugyokurou.fgow.plugin;
 
 import java.io.File;
+import java.net.URI;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.FlatDirectoryArtifactRepository;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.internal.artifacts.repositories.AbstractArtifactRepository;
 import org.gradle.api.internal.artifacts.repositories.DefaultFlatDirArtifactRepository;
 import org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository;
@@ -52,19 +56,31 @@ public class ClosureRepoHacker extends Closure<Object> {
 		    		rootProject = rootProject.getRootProject();
 		    	//ReposExtension exten = (ReposExtension)rootProject.getExtensions().findByName("repos"); //Reset repositories.
 		    	int size = proj.getRepositories().size();
-		    	if(size > 4)
+		    	if(size > 5)
 		    	{
 		    		boolean hasFlat = false;
-		    		//final List<File> flat = Lists.newArrayList(plugin.delayedDirtyFile("what", "a", "shame").call().getParentFile());
+		    		final Set<File> flat = new HashSet<File>();
+		    		FlatDirectoryArtifactRepository local = null;
 		    		for(Iterator<ArtifactRepository> iterator = proj.getRepositories().iterator(); iterator.hasNext(); )
 		    		{
 		    			ArtifactRepository artifactRepository = iterator.next();
 		    			String name = artifactRepository.getName();
 		    			if(name.equals("forge") || name.equals("MavenRepo") || name.equals("minecraft"))
 		    				iterator.remove();
-		    			if(name.equals("local"))
+		    			else if(name.equals("TweakerMcRepo"))
 		    			{
-		    				((FlatDirectoryArtifactRepository)artifactRepository).setDirs(flat);
+		    				flat.addAll(((FlatDirectoryArtifactRepository)artifactRepository).getDirs());
+		    				iterator.remove();
+		    			}
+		    			else if(name.equals("deobfDeps"))
+		    			{
+		    				flat.add(new File(((MavenArtifactRepository)artifactRepository).getUrl()));
+		    				iterator.remove();
+		    			}
+		    			else if(name.equals("local"))
+		    			{
+		    				local = (FlatDirectoryArtifactRepository)artifactRepository;
+		    				local.setName("TweakerMcRepo");
 		    				hasFlat = true;
 		    			}
 		    		}
@@ -74,10 +90,14 @@ public class ClosureRepoHacker extends Closure<Object> {
 		    	            @Override
 		    	            public void execute(FlatDirectoryArtifactRepository repo)
 		    	            {
-		    	                repo.setName(plugin.getApiName(plugin.getExtension())+"FlatRepo");
-		    	                repo.dirs(flat);
+		    	                repo.setName("TweakerMcRepo");
+		    	                repo.setDirs(flat);
 		    	            }
 		    	        });
+		    		}
+		    		else
+		    		{
+		    			local.setDirs(flat);
 		    		}
 		    	}
 		    	//For debug
@@ -92,7 +112,10 @@ public class ClosureRepoHacker extends Closure<Object> {
 		    		}
 		    		else if(repository instanceof DefaultFlatDirArtifactRepository)
 		    		{
-		    			System.out.println(((DefaultFlatDirArtifactRepository)repository).getDirs().iterator().next());
+		    			for(File file : ((DefaultFlatDirArtifactRepository)repository).getDirs())
+		    			{
+		    				System.out.println(file);
+		    			}
 		    		}        			
 		    	}
 		    	

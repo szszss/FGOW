@@ -46,7 +46,7 @@ public class FgowUserPlugin extends ForgePlugin {
 		resourceRecord = project.getProjectDir().getAbsolutePath() + "/src/main/resources/resourcesRecord.buildignore";
 		
 		ReposExtension.applyRepoHack(this);
-		TasksClassicWorkspace.createTasks(this);
+		//TasksClassicWorkspace.createTasks(this);
 	}
 
 	/*@Override

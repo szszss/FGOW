@@ -25,7 +25,7 @@ class ActionRepoHacker implements Action<Project> {
         	downloadAssets = (TaskDownloadAssetsCopyCat)proj.task(map, "getAssets");
         	downloadAssets.setAssetsDir(plugin.delayedFilePublic(Constants.DIR_ASSETS));
         	downloadAssets.setAssetsIndex(plugin.delayedFilePublic(Constants.JSON_ASSET_INDEX));
-        	downloadAssets.dependsOn("getAssetsIndex");
+        	downloadAssets.dependsOn(Constants.TASK_DL_ASSET_INDEX);
         }
 	}
 }

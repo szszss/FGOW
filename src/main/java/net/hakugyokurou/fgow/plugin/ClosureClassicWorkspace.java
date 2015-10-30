@@ -32,7 +32,8 @@ class ClosureClassicWorkspace extends Closure<Object> {
     @Override
     public Object call()
     {
-    	final FgowUserPlugin plugin = (FgowUserPlugin)getOwner();
+    	//TODO:FIX CLASSIC
+    	/*final FgowUserPlugin plugin = (FgowUserPlugin)getOwner();
     	final Project project = plugin.project;
         TaskExecutionGraph graph = project.getGradle().getTaskGraph();
         String path = project.getPath();
@@ -51,7 +52,7 @@ class ClosureClassicWorkspace extends Closure<Object> {
         {
         	plugin.getExtension().setDecomp();
             plugin.setMinecraftDepsPublic(true, true);
-        }
+        }*/
         return null;
     }
 }
