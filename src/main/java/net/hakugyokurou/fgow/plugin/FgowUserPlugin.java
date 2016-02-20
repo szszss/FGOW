@@ -2,6 +2,8 @@ package net.hakugyokurou.fgow.plugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.List;
+
 import org.gradle.api.internal.file.collections.SimpleFileCollection;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.bundling.Jar;
@@ -103,12 +105,14 @@ public class FgowUserPlugin extends ForgePlugin {
 		{
 			strUrl = project.property("forgeJsonUrl").toString();
 		}
-		else if(strUrl.equals("https://www.abrarsyed.com/ForgeGradleVersion.json") && project.hasProperty("forgeVersionUrl"))
+		else if(strUrl.equals("https://www.abrarsyed.com/ForgeGradleVersion.json") && project.hasProperty("fgVersionUrl"))
 		{
-			strUrl = project.property("forgeVersionUrl").toString();
+			strUrl = project.property("fgVersionUrl").toString();
 		}
 		return super.getWithEtag(strUrl, cache, etagFile);
 	}
+	
+	
 
 	//hack forge json 
 	//UNUSED.
@@ -131,6 +135,19 @@ public class FgowUserPlugin extends ForgePlugin {
         {
         }
 	}*/
+
+	@Override
+	protected void doFGVersionCheck(List<String> outLines) {
+		if(project.hasProperty("skipFGVersionCheck"))
+		{
+			Object prop = project.property("skipFGVersionCheck");
+			if(prop instanceof Boolean && ((Boolean)prop).booleanValue() == true)
+				return;
+			if(prop instanceof String && ((String)prop).equalsIgnoreCase("true"))
+				return;
+		}
+		super.doFGVersionCheck(outLines);
+	}
 
 	public DelayedString delayedStringPublic(String path) {
 		return delayedString(path);
