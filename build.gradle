@@ -7,8 +7,11 @@ compileJava
 {
 	options.encoding = "UTF-8"
 }
-sourceCompatibility = 1.6
-version = '1.2.1'
+group = 'net.hakugyokurou.fgow'
+archivesBaseName = 'fgow'
+targetCompatibility = '1.6'
+sourceCompatibility = '1.6'
+version = '1.2.2'
 
 repositories {
 	mavenCentral()
@@ -25,4 +28,11 @@ repositories {
 dependencies {
 	compile gradleApi()  
 	compile 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+}
+
+jar {
+	manifest {
+		attributes 'version':project.version, 'javaCompliance': project.targetCompatibility
+		attributes 'group':project.group
+	}
 }

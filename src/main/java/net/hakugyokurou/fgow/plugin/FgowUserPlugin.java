@@ -109,6 +109,10 @@ public class FgowUserPlugin extends ForgePlugin {
 		{
 			strUrl = project.property("fgVersionUrl").toString();
 		}
+		else if(strUrl.equals(Constants.URL_MC_MANIFEST) && project.hasProperty("mcManifestUrl"))
+		{
+			strUrl = project.property("mcManifestUrl").toString();
+		}
 		return super.getWithEtag(strUrl, cache, etagFile);
 	}
 	
